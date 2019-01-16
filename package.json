@@ -1,0 +1,38 @@
+{
+  "name": "@konata9/storage",
+  "version": "1.0.0",
+  "description": "Simple localStorage & sessionStorage tool",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Konata9/storage.git"
+  },
+  "keywords": [
+    "localStorage",
+    "sessionStorage",
+    "api",
+    "tool",
+    "storage"
+  ],
+  "author": "Konata9",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Konata9/storage/issues"
+  },
+  "homepage": "https://github.com/Konata9/storage#readme",
+  "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.2.3",
+    "@babel/preset-es2015": "^7.0.0-beta.53",
+    "@babel/register": "^7.0.0",
+    "babel-loader": "^8.0.5",
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
+    "webpack": "^4.28.4",
+    "webpack-cli": "^3.2.1"
+  },
+  "dependencies": {}
+}
