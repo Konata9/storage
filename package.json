@@ -4,7 +4,7 @@
   "description": "Simple localStorage & sessionStorage tool",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/mocha/bin/mocha --compilers js:@babel/register test/storage.test.js"
   },
   "repository": {
     "type": "git",
@@ -26,7 +26,6 @@
   "devDependencies": {
     "@babel/core": "^7.2.2",
     "@babel/preset-env": "^7.2.3",
-    "@babel/preset-es2015": "^7.0.0-beta.53",
     "@babel/register": "^7.0.0",
     "babel-loader": "^8.0.5",
     "chai": "^4.2.0",
@@ -34,5 +33,7 @@
     "webpack": "^4.28.4",
     "webpack-cli": "^3.2.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@konata9/typecheck.js": "^1.0.8"
+  }
 }
