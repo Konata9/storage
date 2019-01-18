@@ -4,7 +4,8 @@
   "description": "Simple localStorage & sessionStorage tool",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --compilers js:@babel/register test/storage.test.js"
+    "build": "webpack --env.NODE_ENV=prod --env.production --progress --config webpack.config.js",
+    "test": "webpack --env.NODE_ENV=test --progress --config webpack.config.js && open file:///Users/maochichen/Workspace/storage/test/testrunner.html"
   },
   "repository": {
     "type": "git",
