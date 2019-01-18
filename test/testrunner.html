@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Mocha Tests - Storage</title>
+    <link rel="stylesheet" href="./../node_modules/mocha/mocha.css" />
+  </head>
+  <body>
+    <div id="mocha"></div>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="./../node_modules/mocha/mocha.js"></script>
+    <script src="./../node_modules/chai/chai.js"></script>
+    <script>
+      mocha.setup("bdd");
+    </script>
+
+    <!-- load code you want to test here -->
+    <script type="text/babel" src="storage.test.js"></script>
+    <!-- load your test files here -->
+
+    <script>
+      mocha.run();
+    </script>
+  </body>
+</html>
