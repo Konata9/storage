@@ -3,9 +3,9 @@ import typecheck from "@konata9/typecheck.js";
 export default {
   // CONSTANT VALUE
   ONE_MINUTE: 1000 * 60,
-  ONE_HOUR: this.ONE_MINUTE * 60,
-  ONE_DAY: this.ONE_HOUR * 24,
-  ONE_MONTH: this.ONE_DAY * 30,
+  ONE_HOUR: 1000 * 60 * 60,
+  ONE_DAY: 1000 * 60 * 60 * 24,
+  ONE_MONTH: 1000 * 60 * 60 * 24 * 30,
   // type value & function
   type: null || "session",
   getType: function () {
@@ -13,7 +13,10 @@ export default {
   },
   setType: function (type) {
     if (!type) {
-      throw new Error("Storage type can not be null.");
+      throw new Error("Storage type can not be null");
+    }
+    if (type !== 'local' && type !== 'session') {
+      throw new Error("Type must be local or session")
     }
     this.type = type;
   },
@@ -31,17 +34,17 @@ export default {
       }
       window[`${this.type}Storage`].setItem(insertItem, JSON.stringify(value))
     } else {
-      throw new Error("InsertItem only accept object or string.");
+      throw new Error("InsertItem only accept object or string");
     }
   },
   get: function (keyItem) {
     if (typecheck(keyItem) === "array") {
       return keyItem.map(key => {
         if (this.checkExpired(key)) {
-          this.remove([keyItem, `__${keyItem}__`])
+          this.remove([key, `__${key}__`])
           return null
         } else {
-          return window[`${this.type}Storage`].getItem(JSON.parse(key))
+          return JSON.parse(window[`${this.type}Storage`].getItem(key))
         }
       });
     } else if (typecheck(keyItem) === "string") {
@@ -49,21 +52,21 @@ export default {
         this.remove([keyItem, `__${keyItem}__`])
         return null
       } else {
-        return window[`${this.type}Storage`].getItem(JSON.parse(keyItem));
+        return JSON.parse(window[`${this.type}Storage`].getItem(keyItem));
       }
     } else {
-      throw new Error("KeyItem only accept array or string.");
+      throw new Error("KeyItem only accept array or string");
     }
   },
   remove: function (keyItem = []) {
     if (typecheck(keyItem) === "array") {
-      for (let key in keyItem) {
+      for (let key of keyItem) {
         window[`${this.type}Storage`].removeItem(key);
       }
     } else if (typecheck(keyItem) === "string") {
       window[`${this.type}Storage`].removeItem(keyItem);
     } else {
-      throw new Error("KeyItem only accept array or string.");
+      throw new Error("KeyItem only accept array or string");
     }
   },
   clear: function () {
@@ -71,7 +74,7 @@ export default {
   },
   hasKey: function (key) {
     if (typecheck(key) !== "string") {
-      throw new Error("Key must be a string.");
+      throw new Error("Key must be a string");
     }
     return this.listKeys().includes(key);
   },
@@ -86,7 +89,7 @@ export default {
   },
   checkExpired: function (key) {
     if (typecheck(key) !== 'string') {
-      throw new Error("Key must be a string.")
+      throw new Error("Key must be a string")
     }
     let expireKey = `__${key}__`
     if (this.hasKey(expireKey)) {

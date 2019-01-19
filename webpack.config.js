@@ -1,19 +1,24 @@
 const path = require("path");
 
+const entryFile = {
+  prod: "./index.js",
+  test: "./test/storage.test.js"
+}
 const outPutPath = {
   prod: { path: path.resolve(__dirname, "./dist"), filename: "index.js" },
-  test: { path: path.resolve(__dirname, "./test"), filename: "storage.test.js" }
+  test: { path: path.resolve(__dirname, "./test"), filename: "storage.test.bundle.js" }
 };
 
-module.exports = env => {
-  console.log(`Now in ENV: ${env.NODE_ENV}.`);
+module.exports = (env) => {
+  const currentEnv = env.NODE_ENV
+  console.log(`Now in ENV: ${currentEnv}.`);
 
   return {
     mode: "development",
-    entry: "./index.js",
+    entry: entryFile[currentEnv],
     output: {
-      path: outPutPath[env.NODE_ENV].path,
-      filename: outPutPath[env.NODE_ENV].filename
+      path: outPutPath[currentEnv].path,
+      filename: outPutPath[currentEnv].filename
       // libraryExport: "default",
       // libraryTarget: "commonjs2"
     },
