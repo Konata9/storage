@@ -11343,6 +11343,52 @@ module.exports = g;
 
 /***/ }),
 
+/***/ "./src/paramsCheck.js":
+/*!****************************!*\
+  !*** ./src/paramsCheck.js ***!
+  \****************************/
+/*! exports provided: objectParamsCheck, stringParamsCheck, storageTypeCheck */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "objectParamsCheck", function() { return objectParamsCheck; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "stringParamsCheck", function() { return stringParamsCheck; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "storageTypeCheck", function() { return storageTypeCheck; });
+/* harmony import */ var _konata9_typecheck_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @konata9/typecheck.js */ "./node_modules/@konata9/typecheck.js/dist/index.js");
+/* harmony import */ var _konata9_typecheck_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_konata9_typecheck_js__WEBPACK_IMPORTED_MODULE_0__);
+
+
+var notNullParamsCheck = function notNullParamsCheck(paramName, param) {
+  if (!param) {
+    throw new ReferenceError("".concat(paramName, " can't be null"));
+  }
+};
+
+var paramTypeCheck = function paramTypeCheck(paramName, param, paramType) {
+  if (_konata9_typecheck_js__WEBPACK_IMPORTED_MODULE_0___default()(param) !== paramType) {
+    throw new TypeError("".concat(paramName, " require param type: ").concat(paramType));
+  }
+};
+
+var objectParamsCheck = function objectParamsCheck(paramName, param) {
+  notNullParamsCheck(paramName, param);
+  paramTypeCheck(paramName, param, 'object');
+};
+var stringParamsCheck = function stringParamsCheck(paramName, param) {
+  notNullParamsCheck(paramName, param);
+  paramTypeCheck(paramName, param, 'string');
+};
+var storageTypeCheck = function storageTypeCheck(type) {
+  stringParamsCheck('Type', type);
+
+  if (type !== 'local' && type !== 'session') {
+    throw new ReferenceError('Type must be local or session');
+  }
+};
+
+/***/ }),
+
 /***/ "./src/storage.js":
 /*!************************!*\
   !*** ./src/storage.js ***!
@@ -11354,79 +11400,87 @@ module.exports = g;
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _konata9_typecheck_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @konata9/typecheck.js */ "./node_modules/@konata9/typecheck.js/dist/index.js");
 /* harmony import */ var _konata9_typecheck_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_konata9_typecheck_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _paramsCheck_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./paramsCheck.js */ "./src/paramsCheck.js");
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  // CONSTANT VALUE
+  EXPIRE_PATTERN: /^\-\-/,
   ONE_MINUTE: 1000 * 60,
   ONE_HOUR: 1000 * 60 * 60,
   ONE_DAY: 1000 * 60 * 60 * 24,
   ONE_MONTH: 1000 * 60 * 60 * 24 * 30,
-  // type value & function
-  type:  false || "session",
+  type:  false || 'session',
   getType: function getType() {
     return this.type;
   },
   setType: function setType(type) {
-    if (!type) {
-      throw new Error("Storage type can not be null");
-    }
-
-    if (type !== 'local' && type !== 'session') {
-      throw new Error("Type must be local or session");
-    }
-
+    _paramsCheck_js__WEBPACK_IMPORTED_MODULE_1__["storageTypeCheck"](type);
     this.type = type;
   },
-  // storage function
   set: function set(insertItem) {
-    var value = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-    var expireKey = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-    var expires = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : this.ONE_DAY;
+    var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.type;
+    _paramsCheck_js__WEBPACK_IMPORTED_MODULE_1__["objectParamsCheck"]('insertItem', insertItem);
+    _paramsCheck_js__WEBPACK_IMPORTED_MODULE_1__["storageTypeCheck"](type);
 
-    if (_konata9_typecheck_js__WEBPACK_IMPORTED_MODULE_0___default()(insertItem) === "object") {
-      for (var key in insertItem) {
-        if (insertItem.hasOwnProperty(key)) {
-          window["".concat(this.type, "Storage")].setItem(key, JSON.stringify(insertItem[key]));
-        }
+    for (var key in insertItem) {
+      if (insertItem.hasOwnProperty(key)) {
+        window["".concat(type, "Storage")].setItem(key, JSON.stringify(insertItem[key]));
       }
-    } else if (_konata9_typecheck_js__WEBPACK_IMPORTED_MODULE_0___default()(insertItem) === "string") {
-      if (expireKey) {
-        window["".concat(this.type, "Storage")].setItem("__".concat(insertItem, "__"), JSON.stringify(+new Date() + expires));
-      }
+    }
+  },
+  setExpireKey: function setExpireKey(insertItem) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+    _paramsCheck_js__WEBPACK_IMPORTED_MODULE_1__["objectParamsCheck"]('insertItem', insertItem);
+    options = options ? options : {};
+    _paramsCheck_js__WEBPACK_IMPORTED_MODULE_1__["objectParamsCheck"]('options', options);
 
-      window["".concat(this.type, "Storage")].setItem(insertItem, JSON.stringify(value));
-    } else {
-      throw new Error("InsertItem only accept object or string");
+    var opts = _objectSpread({
+      type: this.type,
+      expires: this.ONE_DAY
+    }, options);
+
+    for (var key in insertItem) {
+      var _this$set;
+
+      var expireKey = "--".concat(key, "--");
+      this.set((_this$set = {}, _defineProperty(_this$set, key, insertItem[key]), _defineProperty(_this$set, expireKey, +new Date() + opts.expires), _this$set), opts.type);
     }
   },
   get: function get(keyItem) {
     var _this = this;
 
-    if (_konata9_typecheck_js__WEBPACK_IMPORTED_MODULE_0___default()(keyItem) === "array") {
+    var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.type;
+
+    if (_konata9_typecheck_js__WEBPACK_IMPORTED_MODULE_0___default()(keyItem) === 'array') {
       return keyItem.map(function (key) {
-        if (_this.checkExpired(key)) {
-          _this.remove([key, "__".concat(key, "__")]);
+        if (_this.checkExpired(key, type)) {
+          _this.remove([key, "--".concat(key, "--")]);
 
           return null;
         } else {
-          return JSON.parse(window["".concat(_this.type, "Storage")].getItem(key));
+          return JSON.parse(window["".concat(type, "Storage")].getItem(key));
         }
       });
-    } else if (_konata9_typecheck_js__WEBPACK_IMPORTED_MODULE_0___default()(keyItem) === "string") {
-      if (this.checkExpired(keyItem)) {
-        this.remove([keyItem, "__".concat(keyItem, "__")]);
+    } else if (_konata9_typecheck_js__WEBPACK_IMPORTED_MODULE_0___default()(keyItem) === 'string') {
+      if (this.checkExpired(keyItem, type)) {
+        this.remove([keyItem, "--".concat(keyItem, "--")]);
         return null;
       } else {
-        return JSON.parse(window["".concat(this.type, "Storage")].getItem(keyItem));
+        return JSON.parse(window["".concat(type, "Storage")].getItem(keyItem));
       }
     } else {
-      throw new Error("KeyItem only accept array or string");
+      throw new TypeError('KeyItem only accept array or string');
     }
   },
   remove: function remove() {
     var keyItem = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+    var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.type;
 
-    if (_konata9_typecheck_js__WEBPACK_IMPORTED_MODULE_0___default()(keyItem) === "array") {
+    if (_konata9_typecheck_js__WEBPACK_IMPORTED_MODULE_0___default()(keyItem) === 'array') {
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
       var _iteratorError = undefined;
@@ -11434,7 +11488,7 @@ __webpack_require__.r(__webpack_exports__);
       try {
         for (var _iterator = keyItem[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var key = _step.value;
-          window["".concat(this.type, "Storage")].removeItem(key);
+          window["".concat(type, "Storage")].removeItem(key);
         }
       } catch (err) {
         _didIteratorError = true;
@@ -11450,42 +11504,51 @@ __webpack_require__.r(__webpack_exports__);
           }
         }
       }
-    } else if (_konata9_typecheck_js__WEBPACK_IMPORTED_MODULE_0___default()(keyItem) === "string") {
-      window["".concat(this.type, "Storage")].removeItem(keyItem);
+    } else if (_konata9_typecheck_js__WEBPACK_IMPORTED_MODULE_0___default()(keyItem) === 'string') {
+      window["".concat(type, "Storage")].removeItem(keyItem);
     } else {
-      throw new Error("KeyItem only accept array or string");
+      throw new TypeError('KeyItem only accept array or string');
     }
   },
   clear: function clear() {
-    window["".concat(this.type, "Storage")].clear();
+    var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.stype;
+    _paramsCheck_js__WEBPACK_IMPORTED_MODULE_1__["storageTypeCheck"](type);
+    window["".concat(type, "Storage")].clear();
   },
   hasKey: function hasKey(key) {
-    if (_konata9_typecheck_js__WEBPACK_IMPORTED_MODULE_0___default()(key) !== "string") {
-      throw new Error("Key must be a string");
-    }
-
-    return this.listKeys().includes(key);
+    var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.type;
+    _paramsCheck_js__WEBPACK_IMPORTED_MODULE_1__["stringParamsCheck"]('Key', key);
+    return this.listKeys(type, true).includes(key);
   },
   listKeys: function listKeys() {
+    var _this2 = this;
+
+    var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.type;
+    var full = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+    _paramsCheck_js__WEBPACK_IMPORTED_MODULE_1__["storageTypeCheck"](type);
     var keyList = [];
 
-    for (var key in window["".concat(this.type, "Storage")]) {
-      if (window["".concat(this.type, "Storage")].hasOwnProperty(key)) {
+    for (var key in window["".concat(type, "Storage")]) {
+      if (window["".concat(type, "Storage")].hasOwnProperty(key)) {
         keyList.push(key);
       }
     }
 
-    return keyList;
+    if (!full) {
+      return keyList.filter(function (key) {
+        return !_this2.EXPIRE_PATTERN.test(key);
+      });
+    } else {
+      return keyList;
+    }
   },
   checkExpired: function checkExpired(key) {
-    if (_konata9_typecheck_js__WEBPACK_IMPORTED_MODULE_0___default()(key) !== 'string') {
-      throw new Error("Key must be a string");
-    }
+    var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.type;
+    _paramsCheck_js__WEBPACK_IMPORTED_MODULE_1__["stringParamsCheck"]('Key', key);
+    var expireKey = "--".concat(key, "--");
 
-    var expireKey = "__".concat(key, "__");
-
-    if (this.hasKey(expireKey)) {
-      return this.get(expireKey) < +new Date();
+    if (this.hasKey(expireKey, type)) {
+      return this.get(expireKey, type) < +new Date();
     } else {
       return null;
     }
@@ -11508,23 +11571,41 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _konata9_typecheck_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @konata9/typecheck.js */ "./node_modules/@konata9/typecheck.js/dist/index.js");
 /* harmony import */ var _konata9_typecheck_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_konata9_typecheck_js__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _index__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./../index */ "./index.js");
+/* harmony import */ var _src_paramsCheck_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../src/paramsCheck.js */ "./src/paramsCheck.js");
 
 
 
 
-describe('Default value check', () => {
-  it('Storage type: Object', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_konata9_typecheck_js__WEBPACK_IMPORTED_MODULE_1___default()(_index__WEBPACK_IMPORTED_MODULE_2__["default"])).to.be.equal('object'))
-  it('Storage get default type: session', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].getType()).to.be.equal('session'))
-  it('Storage set type: local', () => {
+
+describe('Params check test', () => {
+  describe('Storage type check', () => {
+    it('Type null check', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(() => _src_paramsCheck_js__WEBPACK_IMPORTED_MODULE_3__["storageTypeCheck"]()).to.throw(ReferenceError, 'Type can\'t be null'))
+    it('Type error check', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(() => _src_paramsCheck_js__WEBPACK_IMPORTED_MODULE_3__["storageTypeCheck"]([])).to.throw(TypeError, 'Type require param type: string'))
+    it('Type value check', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(() => _src_paramsCheck_js__WEBPACK_IMPORTED_MODULE_3__["storageTypeCheck"]('abc')).to.throw(ReferenceError, 'Type must be local or session'))
+  })
+
+  describe('ObjParams type check', () => {
+    it('Type null check', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(() => _src_paramsCheck_js__WEBPACK_IMPORTED_MODULE_3__["objectParamsCheck"]('insertItem')).to.throw(ReferenceError, 'insertItem can\'t be null'))
+    it('Type error check', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(() => _src_paramsCheck_js__WEBPACK_IMPORTED_MODULE_3__["objectParamsCheck"]('insertItem', [])).to.throw(TypeError, 'insertItem require param type: object'))
+  })
+
+  describe('StringParams type check', () => {
+    it('Type null check', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(() => _src_paramsCheck_js__WEBPACK_IMPORTED_MODULE_3__["stringParamsCheck"]('Key')).to.throw(ReferenceError, 'Key can\'t be null'))
+    it('Type error check', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(() => _src_paramsCheck_js__WEBPACK_IMPORTED_MODULE_3__["stringParamsCheck"]('Key', 1)).to.throw(TypeError, 'Key require param type: string'))
+  })
+})
+
+describe('Storage default value check', () => {
+  it('Type check Object', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_konata9_typecheck_js__WEBPACK_IMPORTED_MODULE_1___default()(_index__WEBPACK_IMPORTED_MODULE_2__["default"])).to.be.equal('object'))
+  it('Default type: session', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].getType()).to.be.equal('session'))
+  it('Set type: local', () => {
     _index__WEBPACK_IMPORTED_MODULE_2__["default"].setType('local')
     return Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].getType()).to.be.equal('local')
   })
-  it('Storage set type: session', () => {
+  it('Set type: session', () => {
     _index__WEBPACK_IMPORTED_MODULE_2__["default"].setType('session')
     return Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].getType()).to.be.equal('session')
   })
-  it('Storage set error: null', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(() => _index__WEBPACK_IMPORTED_MODULE_2__["default"].setType()).to.throw(Error, 'Storage type can not be null'))
-  it('Storage set error: other string', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(() => _index__WEBPACK_IMPORTED_MODULE_2__["default"].setType('a')).to.throw(Error, 'Type must be local or session'))
 })
 
 describe('Const check', () => {
@@ -11537,48 +11618,53 @@ describe('Const check', () => {
 describe('Function Test:', () => {
   describe('Get and Set check', () => {
     // function check
-    it('Storage mutiple set and get', () => {
-      _index__WEBPACK_IMPORTED_MODULE_2__["default"].set({ a: 1, b: 2, c: 3 })
+    it('Storage multiple set and get', () => {
+      _index__WEBPACK_IMPORTED_MODULE_2__["default"].set({a: 1, b: 2, c: 3})
       return Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].get(['a', 'b', 'c'])).to.be.eql([1, 2, 3])
     })
     it('Storage single set and get', () => {
-      _index__WEBPACK_IMPORTED_MODULE_2__["default"].set('d', [1, 2])
+      _index__WEBPACK_IMPORTED_MODULE_2__["default"].set({d: [1, 2]})
       return Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].get('d')).to.be.eql([1, 2])
     })
-    it('Storage set item type error', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(() => _index__WEBPACK_IMPORTED_MODULE_2__["default"].set([])).to.throw(Error, 'InsertItem only accept object or string'))
-    it('Storage get item type error', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(() => _index__WEBPACK_IMPORTED_MODULE_2__["default"].get({})).to.throw(Error, 'KeyItem only accept array or string'))
-  })
-
-  describe('List and Has fucntion', () => {
-    it('Storage list keys', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].listKeys()).to.be.eql(['a', 'b', 'c', 'd']))
-    it('Storage has key a', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].hasKey('a')).to.be.equal(true))
-    it('Storage not has key x', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].hasKey('x')).to.be.equal(false))
-    it('Storage haskey type error', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(() => _index__WEBPACK_IMPORTED_MODULE_2__["default"].hasKey(null)).to.throw(Error, 'Key must be a string'))
   })
 
   describe('Expired function check', () => {
-    it('Storage set expires key', () => {
-      _index__WEBPACK_IMPORTED_MODULE_2__["default"].set('e', { a: 233 }, true)
-      return Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].get('__e__')).to.not.equal(null)
+    it('Storage set single expires key', () => {
+      _index__WEBPACK_IMPORTED_MODULE_2__["default"].setExpireKey({e: 'ee'}, {type: 'local'})
+      return Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].get('--e--', 'local')).to.not.equal(null)
     })
-    it('Storage check unexpired key: e', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].checkExpired('e')).to.be.equal(false)
-    )
-    it('Storage check expired key: f', () => {
-      _index__WEBPACK_IMPORTED_MODULE_2__["default"].set('f', [233], true, -1 * _index__WEBPACK_IMPORTED_MODULE_2__["default"].ONE_HOUR)
-      return Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].checkExpired('f')).to.be.equal(true)
+    it('Storage check unexpired key: e', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].checkExpired('e', 'local')).to.be.equal(false))
+    it('Storage set multiple expired keys: f', () => {
+      _index__WEBPACK_IMPORTED_MODULE_2__["default"].setExpireKey({
+        'f': 1,
+        'g': 2,
+        'h': 3
+      })
+      return Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].get(['f', 'g', 'h'])).to.eql([1, 2, 3])
     })
     it('Storage check expired no key', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].checkExpired('a')).to.be.equal(null))
-    it('Storage get expired key: f', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].get('f')).to.be.equal(null))
-    it('Storage get expired muilte keys: g, h, i', () => {
-      _index__WEBPACK_IMPORTED_MODULE_2__["default"].set('g', 1, true, -1 * _index__WEBPACK_IMPORTED_MODULE_2__["default"].ONE_DAY)
-      _index__WEBPACK_IMPORTED_MODULE_2__["default"].set('h', 2, true, -1 * _index__WEBPACK_IMPORTED_MODULE_2__["default"].ONE_DAY)
-      _index__WEBPACK_IMPORTED_MODULE_2__["default"].set('i', 3, true, -1 * _index__WEBPACK_IMPORTED_MODULE_2__["default"].ONE_DAY)
-      return Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].get(['a', 'g', 'h', 'i', 'c'])).to.be.eql([1, null, null, null, 3])
+    it('Check expired keys: i', () => {
+      _index__WEBPACK_IMPORTED_MODULE_2__["default"].setExpireKey({
+        i: [],
+        j: {},
+        k: '2'
+      }, {expires: -1 * _index__WEBPACK_IMPORTED_MODULE_2__["default"].ONE_DAY})
+      return Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].checkExpired('i')).to.be.equal(true)
     })
+    it('Storage get expired multiple keys: i, j, k', () =>
+      Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].get(['a', 'i', 'j', 'k', 'c'])).to.eql([1, null, null, null, 3]))
+  })
+
+  describe('List and Has', () => {
+    it('Storage list keys not full', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].listKeys()).to.eql(['a', 'b', 'c', 'd', 'f', 'g', 'h']))
+    it('Storage list keys not full by type', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].listKeys('local')).to.be.eql(['e']))
+    it('Storage list keys full by type', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].listKeys('local', true)).to.eql(['--e--', 'e']))
+    it('Storage has key a', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].hasKey('a')).to.be.equal(true))
+    it('Storage not has key x', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].hasKey('x')).to.be.equal(false))
   })
 
   describe('Remove and Clear function', () => {
-    it('Storage remove mutiple keys', () => {
+    it('Storage remove multiple keys', () => {
       _index__WEBPACK_IMPORTED_MODULE_2__["default"].remove(['a', 'b'])
       return Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].get(['a', 'b'])).to.eql([null, null])
     })
@@ -11586,10 +11672,13 @@ describe('Function Test:', () => {
       _index__WEBPACK_IMPORTED_MODULE_2__["default"].remove('c')
       return Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].get('c')).to.be.eql(null)
     })
-    it('Storage remove type error', () => Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(() => _index__WEBPACK_IMPORTED_MODULE_2__["default"].remove({})).to.throw(Error, 'KeyItem only accept array or string'))
-    it('Storage clear storage', () => {
-      _index__WEBPACK_IMPORTED_MODULE_2__["default"].clear()
-      return Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].listKeys()).to.be.eql([])
+    it('Storage clear localStorage', () => {
+      _index__WEBPACK_IMPORTED_MODULE_2__["default"].clear('local')
+      return Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].listKeys('local', true)).to.be.eql([])
+    })
+    it('Storage clear sessionStorage', () => {
+      _index__WEBPACK_IMPORTED_MODULE_2__["default"].clear('session')
+      return Object(chai__WEBPACK_IMPORTED_MODULE_0__["expect"])(_index__WEBPACK_IMPORTED_MODULE_2__["default"].listKeys('session', true)).to.be.eql([])
     })
   })
 })
