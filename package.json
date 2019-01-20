@@ -1,6 +1,6 @@
 {
   "name": "@konata9/storage.js",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Simple localStorage & sessionStorage tool",
   "main": "index.js",
   "scripts": {
