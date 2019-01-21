@@ -10,8 +10,7 @@ npm i @konata9/storage.js
 
 ## Basic Usage
 
-Here is the basic usage.
-
+API familiar to the local/sessionStorage. Easily to use.
 ```javascript
 import Storage from "@konata9/typecheck.js";
 // or
@@ -47,11 +46,11 @@ Storage.clear(); // clear all key-values in the Storage
 
 #### Type
 
-The `type` property decide which Storage (`localStorage` or `sessionStorage`) to use. Default storage is **`sessionStorage`**.
+The `type` property decide which Storage (`localStorage` or `sessionStorage`) to use. **Default storage** is _**`sessionStorage`**_.
 
 ##### `Storage.getType()`
 
-Return current Storage type `'session'` or `'local'`. Default value is `'session'`.
+Return current Storage type `'session'` or `'local'`. **Default value is `'session'`**.
 
 ```javascript
 Storage.getType(); // return 'session' or 'local'
@@ -59,7 +58,9 @@ Storage.getType(); // return 'session' or 'local'
 
 ##### `Storage.setType(type)`
 
-Set the Storage type. The `type` only accpet `'session'` and `'local'`. You can use this method to change the Storage type. _This method will change the global `type` of storage._
+Set the Storage type. The `type` only accpet `'session'` and `'local'`. You can use this method to change the Storage type.
+
+  _This method will change the global `type` of storage._
 
 ```javascript
 Storage.setType("local"); // change localStorage
@@ -80,9 +81,17 @@ _Although we can set `type` by `Storage.type = 'local'/'session'`, we don't sugg
   _You don't need to use `JSON.string()` to encode the value._
 
 ```javaScript
-Storage.set({a: 1}) // set single value and use the current storage
-Storage.set({a: 1}, 'local') // set key-value to localStorage
-Storage.set({a:1, b:2, c:3}) // set multiple key-values to the current storage
+// set single value and use the current storage
+Storage.set({a: 1})
+
+// set key-value to localStorage
+Storage.set({a: 1}, 'local')
+
+// set multiple key-values to the current storage
+Storage.set({a:1, b:2, c:3})
+
+// set multiple key-values to the localStorage
+Storage.set({a:1, b:2, c:3}, 'local') 
 ```
 
 ##### `Storage.get(key, [type])`
@@ -91,38 +100,91 @@ Storage.set({a:1, b:2, c:3}) // set multiple key-values to the current storage
 - `type`: String. Will use current storage `type`. This param let you set the storage type temporarily.
 
 ```javaScript
-Storage.get('a') //return 1 get single value and use the current storage
-Storage.set('a', 'local') // get key-value to localStorage
-Storage.set({a:1, b:2, c:3}) // set multiple key-values to the current storage
+// get single value and use the current storage
+Storage.get('a') // return 1
+
+// get single value from localStorage
+Storage.get('a', 'local') // return 1
+
+// get multiple values by passing key-array
+Storage.get(['a','b','c']) // return [1, 2, 3] 
+
+// get multiple values by passing key-array from localStorage
+Storage.get(['a','b','c'], 'local') // return [1, 2, 3] 
 ```
 
 #### Remove/Clear
 
 ##### `Storage.remove(key, [type])`
 
-- `key`: Array | String.
-- `type`: String. Default value `session`(if you haven't change the `type`), you can set the storage type temporarily.
+- `key`: Array | String. You can remove single value by passing a string, and remove multiple values by passing an array of keys.
+- `type`: String. Will use current storage `type`. This param let you set the storage type temporarily.
 
 ```javaScript
-Storage.set({a: 1}) // set single key-value to current storage
-Storage.set({a: 1}, 'local') // set key-value to localStorage
-Storage.set({a:1, b:2, c:3}) // set multiple key-values to current storage
+// remove single key-value from current storage
+Storage.remove('a')
+
+// remove key-value from localStorage
+Storage.remove('a', 'local') 
+
+// remove multiple key-values from current storage
+Storage.set(['a','b','c']) 
+
+// remove multiple key-values from localStorage
+Storage.set(['a','b','c'], 'local') 
 ```
 
 ##### `Storage.clear([type])`
 
-- `type`: String. Default value `session`(if you haven't change the `type`), you can set the storage type
+- `type`: String. Will use current storage `type`. This param let you set the storage type temporarily.
 
 ```javaScript
-Storage.clear() // clear all key-values in current storage
-Storage.clear('local') // clear all key-values in localStorage
+// clear all key-values in current storage
+Storage.clear() 
+
+// clear all key-values in localStorage
+Storage.clear('local') 
 ```
 
 #### List/Has
 
 ##### `Storage.listKeys([type, full])`
+- `type`: String. Will use current storage `type`. This param let you set the storage type temporarily.
+- `full`: Boolean. Default is `false`, return the keys array without `expire-key`. If you set `true`, it will return all keys array(include `expire-key`).
+
+  _**`expire-key`** look like `--key--`, represent the key has an expire time._
+
+```javaScript
+// get keys from current storage
+Storage.listKeys() // return ['a', 'b', 'c']
+
+// get keys from localStorage
+Storage.listKeys('local') // return ['a', 'b', 'c']
+
+// get all keys from current storage
+Storage.listKeys(Storage.getType(), true) // return ['a', 'b', 'c', '--a--', '--b--', '--c--']
+
+// get all keys from localStorage
+Storage.listKeys('local', true) // return ['a', 'b', 'c', '--a--', '--b--', '--c--']
+```
 
 ##### `Storage.hasKey(key, [type])`
+- `key`: String. You check the key  .
+- `type`: String. Will use current storage `type`. This param let you set the storage type temporarily.
+
+```javaScript
+// remove single key-value from current storage
+Storage.remove('a')
+
+// remove key-value from localStorage
+Storage.remove('a', 'local') 
+
+// remove multiple key-values from current storage
+Storage.set(['a','b','c']) 
+
+// remove multiple key-values from localStorage
+Storage.set(['a','b','c'], 'local') 
+```
 
 #### Expire Key
 
