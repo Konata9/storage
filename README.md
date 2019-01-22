@@ -81,18 +81,18 @@ _Although we can set `type` by `Storage.type = 'local'/'session'`, we don't sugg
 
   _You don't need to use `JSON.stringify()` to encode the value._
 
-```javaScript
+```javascript
 // set single value and use the current storage
-Storage.set({a: 1})
+Storage.set({ a: 1 });
 
 // set key-value to localStorage
-Storage.set({a: 1}, 'local')
+Storage.set({ a: 1 }, "local");
 
 // set multiple key-values to the current storage
-Storage.set({a:1, b:2, c:3})
+Storage.set({ a: 1, b: 2, c: 3 });
 
 // set multiple key-values to the localStorage
-Storage.set({a:1, b:2, c:3}, 'local')
+Storage.set({ a: 1, b: 2, c: 3 }, "local");
 ```
 
 ##### `Storage.get(key, [type])`
@@ -104,18 +104,18 @@ Return `Array` or `String` value due to the type of key you pass. _If the key ex
 
   _You don't need to use `JSON.parse()` to decode the value._
 
-```javaScript
+```javascript
 // get single value and use the current storage
-Storage.get('a') // return 1
+Storage.get("a"); // return 1
 
 // get single value from localStorage
-Storage.get('a', 'local') // return 1
+Storage.get("a", "local"); // return 1
 
 // get multiple values by passing key-array
-Storage.get(['a','b','c']) // return [1, 2, 3]
+Storage.get(["a", "b", "c"]); // return [1, 2, 3]
 
 // get multiple values by passing key-array from localStorage
-Storage.get(['a','b','c'], 'local') // return [1, 2, 3]
+Storage.get(["a", "b", "c"], "local"); // return [1, 2, 3]
 ```
 
 #### Remove/Clear
@@ -125,30 +125,30 @@ Storage.get(['a','b','c'], 'local') // return [1, 2, 3]
 - `key`: Array | String. You can remove single value by passing a string, and remove multiple values by passing an array of keys.
 - `type`: String. Will use current storage `type`. This param let you set the storage type temporarily.
 
-```javaScript
+```javascript
 // remove single key-value from current storage
-Storage.remove('a')
+Storage.remove("a");
 
 // remove key-value from localStorage
-Storage.remove('a', 'local')
+Storage.remove("a", "local");
 
 // remove multiple key-values from current storage
-Storage.set(['a','b','c'])
+Storage.set(["a", "b", "c"]);
 
 // remove multiple key-values from localStorage
-Storage.set(['a','b','c'], 'local')
+Storage.set(["a", "b", "c"], "local");
 ```
 
 ##### `Storage.clear([type])`
 
 - `type`: String. Will use current storage `type`. This param let you set the storage type temporarily.
 
-```javaScript
+```javascript
 // clear all key-values in current storage
-Storage.clear()
+Storage.clear();
 
 // clear all key-values in localStorage
-Storage.clear('local')
+Storage.clear("local");
 ```
 
 #### List/Has
@@ -162,18 +162,18 @@ Return `Array` of values, order is equal to the key you pass.
 
   _**`expire-key`** look like `--key--`, represent the key has an expire time. You can find detail below._
 
-```javaScript
+```javascript
 // get keys from current storage
-Storage.listKeys() // return ['a', 'b', 'c']
+Storage.listKeys(); // return ['a', 'b', 'c']
 
 // get keys from localStorage
-Storage.listKeys('local') // return ['a', 'b', 'c']
+Storage.listKeys("local"); // return ['a', 'b', 'c']
 
 // get all keys from current storage
-Storage.listKeys(Storage.getType(), true) // return ['a', 'b', 'c', '--a--', '--b--', '--c--']
+Storage.listKeys(Storage.getType(), true); // return ['a', 'b', 'c', '--a--', '--b--', '--c--']
 
 // get all keys from localStorage
-Storage.listKeys('local', true) // return ['a', 'b', 'c', '--a--', '--b--', '--c--']
+Storage.listKeys("local", true); // return ['a', 'b', 'c', '--a--', '--b--', '--c--']
 ```
 
 ##### `Storage.hasKey(key, [type])`
@@ -183,14 +183,14 @@ Return `Boolean`（`true` or `false`).
 - `key`: String. You check the key if it is in the storage.
 - `type`: String. Will use current storage `type`. This param let you set the storage type temporarily.
 
-```javaScript
+```javascript
 // check the key from current storage
-Storage.hasKey('a') // return true
-Storage.hasKey('e') // return false if the key didn't exist
+Storage.hasKey("a"); // return true
+Storage.hasKey("e"); // return false if the key didn't exist
 
 // check the from localStorage
-Storage.hasKey('a', 'local') // return true
-Storage.hasKey('e', 'local') // return false if the key didn't exist
+Storage.hasKey("a", "local"); // return true
+Storage.hasKey("e", "local"); // return false if the key didn't exist
 ```
 
 #### Expire Key
@@ -206,30 +206,33 @@ Set the key with _**expires time(seconds)**_. This method will create a key like
   - `options.type`: String. Will use current storage `type`. This param let you set the storage type temporarily.
   - `options.expires`: Number. Default value is `Storage.ONE_DAY`. This param let you set how long(**seconds**) you want to keep.
 
-```javaScript
+```javascript
 // set single value and use the current storage and default expires seconds
-Storage.setExpireKey({a: 1})  // storage will create a expires key --a-- record expires seconds.
+Storage.setExpireKey({ a: 1 }); // storage will create a expires key --a-- record expires seconds.
 
 // set single value and use the current storage and custom expires seconds
-Storage.setExpireKey({a: 1}, {expires: Storage.ONE_DAY * 3}) // expires is three day
+Storage.setExpireKey({ a: 1 }, { expires: Storage.ONE_DAY * 3 }); // expires is three day
 
 // set single value and use localStorage and default expires seconds
-Storage.setExpireKey({a: 1}, {type: 'local'})
+Storage.setExpireKey({ a: 1 }, { type: "local" });
 
 // set single value and use localStorage and custom expires seconds
-Storage.setExpireKey({a: 1}, {type: 'local', expires: Storage.ONE_DAY * 3})
+Storage.setExpireKey({ a: 1 }, { type: "local", expires: Storage.ONE_DAY * 3 });
 
 // set multiple values and use the current storage and custom expires seconds
-Storage.setExpireKey({a:1, b:2, c:3}, {expires: Storage.ONE_DAY * 3}) // expires is three day
+Storage.setExpireKey({ a: 1, b: 2, c: 3 }, { expires: Storage.ONE_DAY * 3 }); // expires is three day
 
 // set multiple values and use the current storage and default expires seconds
-Storage.setExpireKey({a:1, b:2, c:3})
+Storage.setExpireKey({ a: 1, b: 2, c: 3 });
 
 // set multiple values and use localStorage and default expires seconds
-Storage.setExpireKey({a:1, b:2, c:3},  {type: 'local'})
+Storage.setExpireKey({ a: 1, b: 2, c: 3 }, { type: "local" });
 
 // set multiple values and use localStorage and custom expires seconds
-Storage.setExpireKey({a:1, b:2, c:3},  {type: 'local', expires: Storage.ONE_DAY * 3})
+Storage.setExpireKey(
+  { a: 1, b: 2, c: 3 },
+  { type: "local", expires: Storage.ONE_DAY * 3 }
+);
 ```
 
 ##### `Storage.checkExpired(key, [type])`
@@ -239,14 +242,14 @@ Return `Boolean`（`true` or `false`).
 - `key`: String. You check the key if it is expired.
 - `type`: String. Will use current storage `type`. This param let you set the storage type temporarily.
 
-```javaScript
+```javascript
 // check the key from current storage
-Storage.checkExpired('a') // return true if the key is expired
-Storage.checkExpired('e') // return false if the key is not expired
+Storage.checkExpired("a"); // return true if the key is expired
+Storage.checkExpired("e"); // return false if the key is not expired
 
 // check the from localStorage
-Storage.checkExpired('a', 'local') // return true if the key is expired
-Storage.checkExpired('e', 'local') // return false if the key is not expired
+Storage.checkExpired("a", "local"); // return true if the key is expired
+Storage.checkExpired("e", "local"); // return false if the key is not expired
 ```
 
 #### Expire Seconds
