@@ -1,7 +1,7 @@
 const path = require("path");
 
 const entryFile = {
-  prod: "./index.js",
+  prod: "./src/storage.js",
   test: "./test/storage.test.js"
 };
 const outPutPath = {
