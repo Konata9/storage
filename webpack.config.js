@@ -22,6 +22,7 @@ module.exports = (env) => {
     output: {
       path: outPutPath[currentEnv].path,
       filename: outPutPath[currentEnv].filename,
+      library: "Storage",
       libraryTarget: "umd"
     },
     devtool: "source-map",
